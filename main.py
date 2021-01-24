@@ -1,22 +1,44 @@
+from typing import List
+
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 import self as self
 import image_slicer
 
-def make_step(k, filledMaze, emptyMaze):
-    for i in range(len(emptyMaze)):
-        for j in range(len(emptyMaze[i])):
-            if emptyMaze[i][j] == k:
-                if i > 0 and emptyMaze[i - 1][j] == 0 and filledMaze[i - 1][j] == 0:
-                    emptyMaze[i - 1][j] = k + 1
-                if j > 0 and emptyMaze[i][j - 1] == 0 and filledMaze[i][j - 1] == 0:
-                    emptyMaze[i][j - 1] = k + 1
-                if i < len(emptyMaze) - 1 and emptyMaze[i + 1][j] == 0 and filledMaze[i + 1][j] == 0:
-                    emptyMaze[i + 1][j] = k + 1
-                if j < len(emptyMaze[i]) - 1 and emptyMaze[i][j + 1] == 0 and filledMaze[i][j + 1] == 0:
-                    emptyMaze[i][j + 1] = k + 1
+zoom = 20
+borders = 6
+images = []
+
+def draw_matrix(filledMaze, emptyMaze, the_path = []):
+    im = Image.new('RGB', (zoom * len(filledMaze[0]), zoom * len(filledMaze)), (255, 255, 255))
+    draw = ImageDraw.Draw(im)
+    for i in range(len(filledMaze)):
+        for j in range(len(filledMaze[i])):
+            color = (255, 255, 255)
+            r = 0
+            if filledMaze[i][j] == 1:
+                color = (0, 0, 0)
+            if i == start[0] and j == start[1]:
+                color = (0, 255, 0)
+                r = borders
+            if i == end[0] and j == end[1]:
+                color = (0, 255, 0)
+                r = borders
+            draw.rectangle((j*zoom+r, i*zoom+r, j*zoom+zoom-r-1, i*zoom+zoom-r-1), fill=color)
+            if emptyMaze[i][j] > 0:
+                r = borders
+                draw.ellipse((j * zoom + r, i * zoom + r, j * zoom + zoom - r - 1, i * zoom + zoom - r - 1),
+                               fill=(255,0,0))
+    for u in range(len(the_path)-1):
+        y = the_path[u][0]*zoom + int(zoom/2)
+        x = the_path[u][1]*zoom + int(zoom/2)
+        y1 = the_path[u+1][0]*zoom + int(zoom/2)
+        x1 = the_path[u+1][1]*zoom + int(zoom/2)
+        draw.line((x,y,x1,y1), fill=(255, 0,0), width=5)
+    draw.rectangle((0, 0, zoom * len(filledMaze[0]), zoom * len(filledMaze)), outline=(0,255,0), width=2)
+    images.append(im)
 
 
 #Start
@@ -70,7 +92,7 @@ tiles = temp.reshape((tile_height, h // tile_height,
                       tile_width, w // tile_width, temp.shape[2])).swapaxes(1, 2)
 
 # Create the maze in 2d array
-arr = np.ones(shape=(tile_height + 2, tile_width + 2)) #+2 for walls
+arr = np.ones(shape=(tile_height, tile_width))
 
 for y in range(tile_height):
     for x in range(tile_width):
@@ -83,24 +105,76 @@ for y in range(tile_height):
                 pixelValue += thresh[i, j][0]
 
         mean = pixelValue / 529
-        arr[y+1][x+1] = 1 if mean > 55 else 0
+        arr[y][x] = 1 if mean > 55 else 0
 
 print(arr)
 
-# Resolve the maze
-print("Resolving the maze")
+# # Resolve the maze
+# print("Resolving the maze")
 start = 0, 0
 end = 22, 22
+#
+newMaze = np.zeros(shape=(tile_height + 2, tile_width + 2))
+newMaze[start[0], start[1]] = 1
 
-emptyMaze = np.zeros(shape=(tile_height + 2, tile_width + 2))
-emptyMaze[start] = 1
+def hasPath(self, maze: List[List[int]], start: List[int], destination: List[int]) -> bool:
+    visited = []
+    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    dest = (destination[0], destination[1])
 
-print(emptyMaze)
 
-k = 0
-while emptyMaze[end[0]][end[1]] == 0:
-    k += 1
-    make_step(k, arr, emptyMaze)
+    def rollFrom(pos):
+        # check all possible stop positions that current pos can roll to
+        # and exclude those that are already in visited
+        # and then keep rolling from the rest
+        print("rolling from {}".format(pos))
+        the_path.append(pos)
+        newStops = []
+        for d in dirs:
+            newX = pos[0]
+            newY = pos[1]
+            while (True):  # rolling
+                possibleNewX = newX + d[0]
+                possibleNewY = newY + d[1]
+                if (possibleNewX >= 0 and possibleNewX < len(maze)) and (
+                        possibleNewY >= 0 and possibleNewY < len(maze[0])) and (maze[possibleNewX][possibleNewY] != 1):
+                    newX = possibleNewX
+                    newY = possibleNewY
+                    continue
+                else:
+                    break
+            newStop = (newX, newY)
+
+            if newStop == dest:
+                return True
+            newStops.append(newStop)
+
+        visited.append(pos)
+
+        for newStop in newStops:
+            if newStop not in visited:
+                if rollFrom(newStop):
+                    return True
+        return False
+
+
+    startPos = (start[0], start[1])
+    return rollFrom(startPos)
+
+start = 0, 0
+end = 22, 22
+the_path = []
+hasPath(self, arr, start, end)
+print(the_path)
+for i in range(10):
+    if i % 2 == 0:
+        draw_matrix(arr, newMaze, the_path)
+    else:
+        draw_matrix(arr, newMaze)
+
+images[0].save('maze.gif',
+               save_all=True, append_images=images[1:],
+               optimize=False, duration=3, loop=0)
 
 
 #     cvt = 67  # or 41
