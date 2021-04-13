@@ -19,6 +19,8 @@ bigFrameRightPosition = 2000
 movementDuration = 1.5
 sleepDuration = 1
 
+pi = pigpio.pi()
+
 def moveServo(servo, start,end):  #move from start to end, using delta number of seconds
      incMove = (end-start)/100.0
      incTime = movementDuration/100.0
@@ -46,33 +48,49 @@ def rotateBigFrameRight():
     time.sleep(sleepDuration)
     moveServo(bigFrame, bigFrameRightPosition, bigFrameStartPosition)
 
+def start(instructions):
+    print(pi.connected)
 
-pi = pigpio.pi()
-print(pi.connected)
+    if not pi.connected:
+        return False
 
-input("Press Enter to continue...")
+    input("Press Enter to continue...")
 
-#The starting positions of the servos can be seen below.
-#Less than 1450/1550 will rotate to the LEFT
-#More than 1450/1550 will rotate to the RIGHT
+    # The starting positions of the servos can be seen below.
+    # Less than 1450/1550 will rotate to the LEFT
+    # More than 1450/1550 will rotate to the RIGHT
 
-pi.set_servo_pulsewidth(smallFrame, smallFrameStartPosition)
-pi.set_servo_pulsewidth(bigFrame, bigFrameStartPosition)
 
-input("Press Enter to continue...")
+    for instruction in instructions:
+        if (instruction == "up"):
+            rotateBigFrameLeft()
 
-rotateSmallFrameLeft()
-time.sleep(1)
-rotateBigFrameLeft()
-time.sleep(1)
-rotateSmallFrameRight()
-time.sleep(1)
-rotateBigFrameRight()
+        elif(instruction == "down"):
+            rotateBigFrameRight()
 
-input("Press Enter to continue...")
+        elif(instruction == "left"):
+            rotateSmallFrameLeft()
 
-# switch servo off
-pi.set_servo_pulsewidth(smallFrame, 0)
-pi.set_servo_pulsewidth(bigFrame, 0)
+        elif(instruction == "right"):
+            rotateSmallFrameRight()
 
-pi.stop()
+        time.sleep(1)
+
+
+    input("Press Enter to continue...")
+
+    pi.set_servo_pulsewidth(smallFrame, 0)
+    pi.set_servo_pulsewidth(bigFrame, 0)
+
+    pi.stop()
+
+
+# input("Press Enter to continue...")
+#
+# rotateSmallFrameLeft()
+# time.sleep(1)
+# rotateBigFrameLeft()
+# time.sleep(1)
+# rotateSmallFrameRight()
+# time.sleep(1)
+# rotateBigFrameRight()

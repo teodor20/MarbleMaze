@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 import self as self
+import servosPigpio
 
 zoom = 20
 borders = 6
@@ -202,6 +203,12 @@ print(instructions)
 
 ###################################################
 
+############### Move the maze ################
+
+servosPigpio.start(instructions)
+
+##############################################
+
 ############ Create the GIF file #############
 
 newMaze = np.zeros(shape=(tile_height + 2, tile_width + 2))
@@ -216,12 +223,6 @@ for i in range(10):
 images[0].save('maze.gif',
                save_all=True, append_images=images[1:],
                optimize=False, duration=3, loop=0)
-
-##############################################
-
-############### Move the maze ################
-
-
 
 ##############################################
 
