@@ -5,7 +5,6 @@ import numpy as np
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 import self as self
-import image_slicer
 
 zoom = 20
 borders = 6
