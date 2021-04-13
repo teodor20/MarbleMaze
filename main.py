@@ -110,11 +110,6 @@ print(arr)
 
 # # Resolve the maze
 # print("Resolving the maze")
-start = 0, 0
-end = 22, 22
-#
-newMaze = np.zeros(shape=(tile_height + 2, tile_width + 2))
-newMaze[start[0], start[1]] = 1
 
 def hasPath(self, maze: List[List[int]], start: List[int], destination: List[int]) -> bool:
     visited = []
@@ -165,9 +160,56 @@ end = 22, 22
 the_path = []
 hasPath(self, arr, start, end)
 print(the_path)
+
+############ Trim the path #############
+
+good_path = the_path.copy()
+for i in range(len(the_path)):
+    currentPos = the_path[i]
+    if (i != 0 and i != (len(the_path) - 1)):
+        previousPos = the_path[i-1]
+        nexPos = the_path[i+1]
+
+        if (currentPos[0] == previousPos[0] and currentPos[0] == nexPos[0]):
+            good_path.remove(currentPos)
+
+        if (currentPos[1] == previousPos[1] and currentPos[1] == nexPos[1]):
+            good_path.remove(currentPos)
+
+print(good_path)
+########################################
+
+############ Create move instructions #############
+
+instructions = []
+for i in range(len(good_path) - 1):
+    currentPos = good_path[i]
+    nextPos = good_path[i + 1]
+
+    #Checks for small frame
+    if (nextPos[0] == currentPos[0] and nextPos[1] > currentPos[1]):
+        instructions.append("right")
+    elif (nextPos[0] == currentPos[0] and nextPos[1] < currentPos[1]):
+        instructions.append("left")
+
+    # Checks for big frame
+    if (nextPos[1] == currentPos[1] and nextPos[0] > currentPos[0]):
+        instructions.append("down")
+    elif (nextPos[1] == currentPos[1] and nextPos[0] < currentPos[0]):
+        instructions.append("up")
+
+print(instructions)
+
+###################################################
+
+############ Create the GIF file #############
+
+newMaze = np.zeros(shape=(tile_height + 2, tile_width + 2))
+newMaze[start[0], start[1]] = 1
+
 for i in range(10):
     if i % 2 == 0:
-        draw_matrix(arr, newMaze, the_path)
+        draw_matrix(arr, newMaze, good_path)
     else:
         draw_matrix(arr, newMaze)
 
@@ -175,6 +217,13 @@ images[0].save('maze.gif',
                save_all=True, append_images=images[1:],
                optimize=False, duration=3, loop=0)
 
+##############################################
+
+############### Move the maze ################
+
+
+
+##############################################
 
 #     cvt = 67  # or 41
 #     dc = 112
