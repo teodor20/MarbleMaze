@@ -56,6 +56,11 @@ def start(instructions):
 
     input("Press Enter to continue...")
 
+    pi.set_servo_pulsewidth(smallFrame, smallFrameStartPosition)
+    pi.set_servo_pulsewidth(bigFrame, bigFrameStartPosition)
+
+    input("Press Enter to continue...")
+
     # The starting positions of the servos can be seen below.
     # Less than 1450/1550 will rotate to the LEFT
     # More than 1450/1550 will rotate to the RIGHT
