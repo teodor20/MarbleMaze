@@ -1,11 +1,8 @@
-from typing import List
-
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw
-import matplotlib.pyplot as plt
-import self as self
 import servosPigpio
+import path
 
 zoom = 20
 borders = 6
@@ -93,7 +90,8 @@ tiles = temp.reshape((tile_height, h // tile_height,
 
 # Create the maze in 2d array
 arr = np.ones(shape=(tile_height, tile_width))
-
+ballPosition = 0, 0
+foundMarble = False
 for y in range(tile_height):
     for x in range(tile_width):
         current_tile = tiles[y, x]
@@ -105,109 +103,54 @@ for y in range(tile_height):
                 pixelValue += thresh[i, j][0]
 
         mean = pixelValue / 529
-        arr[y][x] = 1 if mean > 55 else 0
+        #arr[y][x] = 1 if mean > 55 else 0
+        if (foundMarble == False) and (mean < 43) and (mean > 25):
+            arr[y][x] = 0
+            foundMarble = True
+            ballPosition = y, x
+        elif mean > 55:
+            arr[y][x] = 1
+        else:
+            arr[y][x] = 0
+
+
+# Check pixel value of first cell
+# firstTile = tiles[0][0]
+# pixelValue = 0
+# ret, thresh = cv2.threshold(firstTile, 127, 255, cv2.THRESH_BINARY_INV)
+#
+# for i in range(0, tile_height):
+#     for j in range(0, tile_width):
+#         pixelValue += thresh[i, j][0]
+#
+# mean = pixelValue / 529
+# print(mean)
 
 print(arr)
 
 # # Resolve the maze
 # print("Resolving the maze")
 
-def hasPath(self, maze: List[List[int]], start: List[int], destination: List[int]) -> bool:
-    visited = []
-    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-    dest = (destination[0], destination[1])
+start = ballPosition
+print("Ball Position: ",  ballPosition)
 
-
-    def rollFrom(pos):
-        # check all possible stop positions that current pos can roll to
-        # and exclude those that are already in visited
-        # and then keep rolling from the rest
-        print("rolling from {}".format(pos))
-        the_path.append(pos)
-        newStops = []
-        for d in dirs:
-            newX = pos[0]
-            newY = pos[1]
-            while (True):  # rolling
-                possibleNewX = newX + d[0]
-                possibleNewY = newY + d[1]
-                if (possibleNewX >= 0 and possibleNewX < len(maze)) and (
-                        possibleNewY >= 0 and possibleNewY < len(maze[0])) and (maze[possibleNewX][possibleNewY] != 1):
-                    newX = possibleNewX
-                    newY = possibleNewY
-                    continue
-                else:
-                    break
-            newStop = (newX, newY)
-
-            if newStop == dest:
-                return True
-            newStops.append(newStop)
-
-        visited.append(pos)
-
-        for newStop in newStops:
-            if newStop not in visited:
-                if rollFrom(newStop):
-                    return True
-        return False
-
-
-    startPos = (start[0], start[1])
-    return rollFrom(startPos)
-
-start = 0, 0
-end = 22, 22
+start = (0, 0)
+end = (22, 22)
 the_path = []
-hasPath(self, arr, start, end)
-print(the_path)
-
-############ Trim the path #############
-
-good_path = the_path.copy()
-for i in range(len(the_path)):
-    currentPos = the_path[i]
-    if (i != 0 and i != (len(the_path) - 1)):
-        previousPos = the_path[i-1]
-        nexPos = the_path[i+1]
-
-        if (currentPos[0] == previousPos[0] and currentPos[0] == nexPos[0]):
-            good_path.remove(currentPos)
-
-        if (currentPos[1] == previousPos[1] and currentPos[1] == nexPos[1]):
-            good_path.remove(currentPos)
-
-print(good_path)
-########################################
-
-############ Create move instructions #############
-
-instructions = []
-for i in range(len(good_path) - 1):
-    currentPos = good_path[i]
-    nextPos = good_path[i + 1]
-
-    #Checks for small frame
-    if (nextPos[0] == currentPos[0] and nextPos[1] > currentPos[1]):
-        instructions.append("right")
-    elif (nextPos[0] == currentPos[0] and nextPos[1] < currentPos[1]):
-        instructions.append("left")
-
-    # Checks for big frame
-    if (nextPos[1] == currentPos[1] and nextPos[0] > currentPos[0]):
-        instructions.append("down")
-    elif (nextPos[1] == currentPos[1] and nextPos[0] < currentPos[0]):
-        instructions.append("up")
-
-print(instructions)
+best_path = path.getPath(arr, start, end)
+print(best_path)
 
 ###################################################
 
 ############### Move the maze ################
 
-servosPigpio.start(instructions)
+servosPigpio.start(best_path)
 
 ##############################################
+
+
+
+
 
 ############ Create the GIF file #############
 
@@ -216,48 +159,10 @@ newMaze[start[0], start[1]] = 1
 
 for i in range(10):
     if i % 2 == 0:
-        draw_matrix(arr, newMaze, good_path)
+        draw_matrix(arr, newMaze, best_path)
     else:
         draw_matrix(arr, newMaze)
 
 images[0].save('maze.gif',
                save_all=True, append_images=images[1:],
                optimize=False, duration=3, loop=0)
-
-##############################################
-
-#     cvt = 67  # or 41
-#     dc = 112
-#
-#     if dc < 1:
-#         dc = 0
-#
-#     while True:
-#         try:
-#
-#             img = cv2.cvtColor(cropped, cvt)
-#             lower = (80, 80, 80)
-#             upper = (80 + dc, 80 + dc, 80 + dc)
-#
-#             mask = cv2.inRange(img, lower, upper)
-#
-#             cv2.imshow('mask', cv2.resize(mask, (640, 480)))
-#
-#         except:
-#             pass
-#
-#         k = cv2.waitKey(33) & 0xFF
-#         if k == ord('1'):
-#             cvt -= 1
-#             print(cvt)
-#         if k == ord('2'):
-#             cvt += 1
-#             print(cvt)
-#         if k == ord('3'):
-#             dc -= 1
-#             print("dc ", dc, lower, upper)
-#         if k == ord('4'):
-#             dc += 1
-#             print("dc ", dc, lower, upper)
-#
-#         if k == ord('c'): break
