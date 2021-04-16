@@ -7,14 +7,16 @@ import time
 # Path can be found with "whereis pigpiod"
 
 smallFrame = 23
-smallFrameStartPosition = 1450
-smallFrameLeftPosition = 1000
-smallFrameRightPosition = 1900
+smallFrameStartPosition = 1430
+smallFrameOffset = 400
+smallFrameLeftPosition = smallFrameStartPosition - smallFrameOffset
+smallFrameRightPosition = smallFrameStartPosition + smallFrameOffset
 
 bigFrame = 24
 bigFrameStartPosition = 1550
-bigFrameLeftPosition = 1100
-bigFrameRightPosition = 2000
+bigFrameOffset = 350
+bigFrameLeftPosition = bigFrameStartPosition - bigFrameOffset
+bigFrameRightPosition = bigFrameStartPosition + bigFrameOffset
 
 movementDuration = 1.5
 sleepDuration = 1
