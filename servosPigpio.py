@@ -14,12 +14,12 @@ smallFrameRightPosition = smallFrameStartPosition + smallFrameOffset
 
 bigFrame = 24
 bigFrameStartPosition = 1550
-bigFrameOffset = 350
+bigFrameOffset = 450
 bigFrameLeftPosition = bigFrameStartPosition - bigFrameOffset
 bigFrameRightPosition = bigFrameStartPosition + bigFrameOffset
 
-movementDuration = 1.5
-sleepDuration = 1
+movementDuration = 0.8
+sleepDuration = 0
 
 pi = pigpio.pi()
 
@@ -69,16 +69,16 @@ def start(instructions):
 
 
     for instruction in instructions:
-        if (instruction == "up"):
+        if (instruction == "Up"):
             rotateBigFrameLeft()
 
-        elif(instruction == "down"):
+        elif(instruction == "Down"):
             rotateBigFrameRight()
 
-        elif(instruction == "left"):
+        elif(instruction == "Left"):
             rotateSmallFrameLeft()
 
-        elif(instruction == "right"):
+        elif(instruction == "Right"):
             rotateSmallFrameRight()
 
         time.sleep(1)
