@@ -39,7 +39,7 @@ def draw_matrix(filledMaze, emptyMaze, the_path = []):
 
 
 #Start
-img = cv2.imread('./maze.jpg')
+img = cv2.imread('images/maze.jpg')
 
 # Grayscale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -163,6 +163,6 @@ for i in range(10):
     else:
         draw_matrix(arr, newMaze)
 
-images[0].save('maze.gif',
+images[0].save('images/maze.gif',
                save_all=True, append_images=images[1:],
                optimize=False, duration=3, loop=0)
