@@ -63,11 +63,6 @@ def start(instructions):
 
     input("Press Enter to continue...")
 
-    # The starting positions of the servos can be seen below.
-    # Less than 1450/1550 will rotate to the LEFT
-    # More than 1450/1550 will rotate to the RIGHT
-
-
     for instruction in instructions:
         if (instruction == "Up"):
             rotateBigFrameLeft()
@@ -90,14 +85,3 @@ def start(instructions):
     pi.set_servo_pulsewidth(bigFrame, 0)
 
     pi.stop()
-
-
-# input("Press Enter to continue...")
-#
-# rotateSmallFrameLeft()
-# time.sleep(1)
-# rotateBigFrameLeft()
-# time.sleep(1)
-# rotateSmallFrameRight()
-# time.sleep(1)
-# rotateBigFrameRight()

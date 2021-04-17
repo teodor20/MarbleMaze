@@ -3,15 +3,11 @@ import path
 import imageProcessing
 
 #Get the maze from a photo
-maze = imageProcessing.getMaze('images/maze4.jpg')
-ballPosition = imageProcessing.getBallPosition()
-start = ballPosition
+maze, ballPosition = imageProcessing.getMaze('images/maze4.jpg')
 print(maze)
 
 
 ############### Resolve the maze #############
-
-print(maze)
 start = ballPosition
 print("Ball Position: ",  ballPosition)
 
