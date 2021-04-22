@@ -1,10 +1,14 @@
 import cv2
 import numpy as np
+from picamera import PiCamera
+from time import sleep
 
+camera = PiCamera()
 
 def getMaze(imagePath):
     #Load the image
-    img = cv2.imread(imagePath)
+    #img = cv2.imread(imagePath)
+    img = captureImage()
 
     #Grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -98,3 +102,10 @@ def applyMasks(tile):
 
     first_mask = cv2.inRange(tile, lower, upper)
     tile[first_mask != 0] = [255, 255, 255]
+
+def captureImage():
+    camera.start_preview()
+    sleep(2)
+    camera.capture('images/test.jpg')
+    img = cv2.imread('images/test.jpg')
+    return img
