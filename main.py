@@ -1,26 +1,40 @@
 import servosPigpio
 import path
 import imageProcessing
-
-#Get the maze from a photo /home/pi/Desktop/image.jpg
-maze, ballPosition = imageProcessing.getMaze()
-print(maze)
-
-
-############### Resolve the maze #############
-start = ballPosition
-print("Ball Position: ",  ballPosition)
+import sys
 
 end = (22, 22)
-the_path = []
-best_path = path.getPath(maze, ballPosition, end)
-print(best_path)
 
-###################################################
+def getBestPath():
+    # Get the maze from a photo
+    maze, ballPosition = imageProcessing.getMaze()
+    #print(maze)
+    print("Ball Position: ", ballPosition)
+
+    # Resolve the maze
+    if ballPosition == end:
+        print("End reached")
+        servosPigpio.stopMotors()
+        sys.exit("End reached")
+
+    best_path = path.getPath(maze, ballPosition, end)
+
+    if best_path == "Impossible":
+        print("No path")
+        servosPigpio.stopMotors()
+        sys.exit("No path")
+
+    return best_path
 
 
-############### Move the maze ################
+def recursiveMovement():
+    path = getBestPath()
+    print(path)
+    servosPigpio.start([path[0]])
+    recursiveMovement()
 
-#servosPigpio.start(best_path)
+def startMarbleMaze():
+    servosPigpio.startMotors()
+    recursiveMovement()
 
-##############################################
+startMarbleMaze()

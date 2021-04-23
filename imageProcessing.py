@@ -20,8 +20,8 @@ def getMaze():
     #Resize
     w, h = (529, 529)
     temp = cv2.resize(cropped, (w, h), interpolation=cv2.INTER_LINEAR)
-    cv2.imshow('Input', temp)
-    cv2.waitKey()
+    # cv2.imshow('Input', temp)
+    # cv2.waitKey()
 
     #Split into tiles
     tile_height = 23;

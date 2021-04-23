@@ -8,7 +8,6 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
     row, col = len(maze), len(maze[0])
     moves = [(-1, 0), (0, 1), (0, -1), (1, 0)]
     dstr = ['u', 'r', 'l', 'd']
-    # change order of properties so comparison works as intended
     Point = collections.namedtuple("Point", "distance, length, directions, coordinates")
 
     heap = [Point(0, 0, "", start)]

@@ -51,18 +51,6 @@ def rotateBigFrameRight():
     moveServo(bigFrame, bigFrameRightPosition, bigFrameStartPosition)
 
 def start(instructions):
-    print(pi.connected)
-
-    if not pi.connected:
-        return False
-
-    input("Press Enter to continue...")
-
-    pi.set_servo_pulsewidth(smallFrame, smallFrameStartPosition)
-    pi.set_servo_pulsewidth(bigFrame, bigFrameStartPosition)
-
-    input("Press Enter to continue...")
-
     for instruction in instructions:
         if (instruction == "Up"):
             rotateBigFrameLeft()
@@ -79,6 +67,20 @@ def start(instructions):
         time.sleep(1)
 
 
+def startMotors():
+    print(pi.connected)
+
+    if not pi.connected:
+        return False
+
+    input("Press Enter to continue...")
+
+    pi.set_servo_pulsewidth(smallFrame, smallFrameStartPosition)
+    pi.set_servo_pulsewidth(bigFrame, bigFrameStartPosition)
+
+    time.sleep(0.5)
+
+def stopMotors():
     input("Press Enter to continue...")
 
     pi.set_servo_pulsewidth(smallFrame, 0)
