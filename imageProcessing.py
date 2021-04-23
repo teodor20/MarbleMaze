@@ -4,37 +4,18 @@ from picamera import PiCamera
 from time import sleep
 
 camera = PiCamera()
+camera.rotation = 180
+camera.resolution = (1600, 1200)
+camera.brightness = 50
+sleep(2)
 
-def getMaze(imagePath):
+def getMaze():
     #Load the image
-    #img = cv2.imread(imagePath)
     img = captureImage()
 
-    #Grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    cv2.namedWindow('Input', cv2.WINDOW_AUTOSIZE)
-    cv2.imshow('Input', gray)
-    cv2.waitKey()
-
-    #Bluring
-    gray = cv2.GaussianBlur(gray, (5, 5), cv2.BORDER_DEFAULT)
-    cv2.imshow('Input', gray)
-    cv2.waitKey()
-
-    #Thresholding
-    ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-    cv2.imshow('Input', thresh)
-    cv2.waitKey()
-
-    #Find the frame
-    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
-    biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
-
-    x, y, w, h = cv2.boundingRect(biggest_contour)
+    #x, y, w, h = findMazeCoordinates(img)
+    x, y, w, h = 125, 59, 1100, 1075
     cropped = img[y: y + h, x: x + w]
-    cv2.imshow('Input', cropped)
-    cv2.waitKey()
 
     #Resize
     w, h = (529, 529)
@@ -104,8 +85,31 @@ def applyMasks(tile):
     tile[first_mask != 0] = [255, 255, 255]
 
 def captureImage():
-    camera.start_preview()
-    sleep(2)
     camera.capture('images/test.jpg')
     img = cv2.imread('images/test.jpg')
     return img
+
+def findMazeCoordinates(img):
+    # Grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.namedWindow('Input', cv2.WINDOW_AUTOSIZE)
+    cv2.imshow('Input', gray)
+    cv2.waitKey()
+
+    # Bluring
+    gray = cv2.GaussianBlur(gray, (5, 5), cv2.BORDER_DEFAULT)
+    cv2.imshow('Input', gray)
+    cv2.waitKey()
+
+    # Thresholding
+    ret, thresh = cv2.threshold(gray, 110, 255, cv2.THRESH_BINARY)
+    cv2.imshow('Input', thresh)
+    cv2.waitKey()
+
+    # Find the frame
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
+    biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+
+    x, y, w, h = cv2.boundingRect(biggest_contour)
+    return x, y, w, h
