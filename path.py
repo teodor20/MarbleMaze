@@ -8,15 +8,16 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
     row, col = len(maze), len(maze[0])
     moves = [(-1, 0), (0, 1), (0, -1), (1, 0)]
     dstr = ['u', 'r', 'l', 'd']
-    Point = collections.namedtuple("Point", "distance, length, directions, coordinates")
+    Point = collections.namedtuple("Point", "distance, length, directions, stepDistances, coordinates")
 
-    heap = [Point(0, 0, "", start)]
+    heap = [Point(0, 0, "", "", start)]
     visited = set()
     while heap:
         point = heapq.heappop(heap)
         dist = point.distance
         directions = point.directions
         node = point.coordinates
+        stepDistances = point.stepDistances
 
         if node in visited: continue
         if node == destination:
@@ -30,16 +31,18 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
             newY = node[1]
             distance = dist
             newDirections = directions
+            stepDistance = 0
 
             while 0 <= newX + dx < row and 0 <= newY + dy < col and maze[newX + dx][newY + dy] == 0:
                 newX += dx
                 newY += dy
                 distance += 1
+                stepDistance += 1
                 if (newX, newY) == destination:
                     break
 
             if (newX, newY) not in visited:
-                heapq.heappush(heap, Point(distance, len(newDirections) + 1, newDirections + dstr[idx], (newX, newY)))
+                heapq.heappush(heap, Point(distance, len(newDirections) + 1, newDirections + dstr[idx], stepDistances + str(stepDistance), (newX, newY)))
 
     return "Impossible"
 
