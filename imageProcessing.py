@@ -14,7 +14,7 @@ def getMaze():
     img = captureImage()
 
     #x, y, w, h = findMazeCoordinates(img)
-    x, y, w, h = 125, 59, 1100, 1075
+    x, y, w, h = 132, 45, 1075, 1075
     cropped = img[y: y + h, x: x + w]
 
     #Resize
@@ -31,15 +31,16 @@ def getMaze():
 
     # Create the maze in 2d array
     arr = np.ones(shape=(tile_height, tile_width))
-    foundMarble = False
+    currentBlue = 0
     ballPosition = (0, 0)
     for y in range(tile_height):
         for x in range(tile_width):
             current_tile = tiles[y, x]
+            currentBluePixels = checkIfBall(current_tile)
 
             # Get the ball position
-            if foundMarble is False and checkIfBall(current_tile):
-                foundMarble = True
+            if currentBluePixels > 50 and currentBluePixels > currentBlue:
+                currentBlue = currentBluePixels
                 ballPosition = (y, x)
 
             # Apply masks
@@ -67,7 +68,7 @@ def checkIfBall(tile):
     dst = cv2.inRange(hsv, hsv_l, hsv_h)
     # Count the blue pixels
     no_blue = cv2.countNonZero(dst)
-    return no_blue > 50
+    return no_blue
 
 def applyMasks(tile):
     # Apply first mask

@@ -15,7 +15,7 @@ smallFrameRightPosition = smallFrameStartPosition + smallFrameOffset
 bigFrame = 24
 bigFrameStartPosition = 1550
 bigFrameOffset = 450
-bigFrameLeftPosition = bigFrameStartPosition - bigFrameOffset
+bigFrameLeftPosition = bigFrameStartPosition - bigFrameOffset - 50
 bigFrameRightPosition = bigFrameStartPosition + bigFrameOffset
 
 movementDuration = 0.8
@@ -63,8 +63,6 @@ def start(instructions):
 
         elif(instruction == "Right"):
             rotateSmallFrameRight()
-
-        time.sleep(1)
 
 
 def startMotors():
