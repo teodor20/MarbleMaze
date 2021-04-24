@@ -2,7 +2,6 @@ import collections
 import heapq
 from typing import List
 
-
 def shortestDistance(maze: List[List[int]], start: List[int], destination: List[int]):
     start, destination = tuple(start), tuple(destination)
     row, col = len(maze), len(maze[0])
@@ -21,7 +20,12 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
 
         if node in visited: continue
         if node == destination:
-            return directions
+            conditionalPathing = False
+            for step in stepDistances:
+                if int(step) > 8:
+                    conditionalPathing = True
+
+            return directions, conditionalPathing
 
         visited.add(node)
 
@@ -44,13 +48,17 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
             if (newX, newY) not in visited:
                 heapq.heappush(heap, Point(distance, len(newDirections) + 1, newDirections + dstr[idx], stepDistances + str(stepDistance), (newX, newY)))
 
-    return "Impossible"
+    return "Impossible", False
 
-############ Create move instructions #############
+# Create move instructions
 def getPath(maze, start, end):
-    shortest_path = shortestDistance(maze, start, end)
+    shortestPath, conditionalPathing = shortestDistance(maze, start, end)
+
+    if shortestPath == "Impossible":
+        return "Impossible"
+
     instructions = []
-    for letter in shortest_path:
+    for letter in shortestPath:
         if letter == 'u':
             instructions.append("Up")
         elif letter == 'd':
@@ -60,4 +68,4 @@ def getPath(maze, start, end):
         elif letter == 'r':
             instructions.append("Right")
 
-    return instructions
+    return instructions, conditionalPathing

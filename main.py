@@ -4,6 +4,7 @@ import imageProcessing
 import sys
 
 end = (22, 22)
+conditionalPathingChecked = False
 
 def getBestPath():
     # Get the maze from a photo
@@ -17,24 +18,30 @@ def getBestPath():
         servosPigpio.stopMotors()
         sys.exit("End reached")
 
-    best_path = path.getPath(maze, ballPosition, end)
+    bestPath, conditionalPathing = path.getPath(maze, ballPosition, end)
 
-    if best_path == "Impossible":
+    if bestPath == "Impossible":
         print("No path")
         servosPigpio.stopMotors()
         sys.exit("No path")
 
-    return best_path
+    return bestPath, conditionalPathing
 
 
-def recursiveMovement():
-    path = getBestPath()
-    print(path)
-    servosPigpio.start([path[0]])
-    recursiveMovement()
+def move(path, conditionalPathing):
+    if conditionalPathing:
+        while True:
+            path, _ = getBestPath()
+            servosPigpio.start([path[0]])
+    else:
+        servosPigpio.start(path)
 
 def startMarbleMaze():
+    path, conditionalPathing = getBestPath()
+    print("Conditional Pathing: ", conditionalPathing)
+    print(path)
+
     servosPigpio.startMotors()
-    recursiveMovement()
+    move(path, conditionalPathing)
 
 startMarbleMaze()
