@@ -7,7 +7,7 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
     row, col = len(maze), len(maze[0])
     moves = [(-1, 0), (0, 1), (0, -1), (1, 0)]
     dstr = ['u', 'r', 'l', 'd']
-    Point = collections.namedtuple("Point", "fvalue, distance, length, directions, stepDistances, coordinates")
+    Point = collections.namedtuple("Point", "totalEstimatedCost, distance, length, directions, stepDistances, coordinates")
 
     heap = [Point(0, 0, 0, "", "", start)]
     visited = set()
@@ -49,10 +49,11 @@ def shortestDistance(maze: List[List[int]], start: List[int], destination: List[
             heuristics = (abs(newX - destination[0])) + (abs(newY - destination[1]))
 
             #Cancluate f from distance and heuristics
-            fvalue = distance + heuristics
+            totalEstimatedCost = distance + heuristics
 
             if (newX, newY) not in visited:
-                heapq.heappush(heap, Point(fvalue, distance, len(newDirections) + 1, newDirections + dstr[idx], stepDistances + str(stepDistance), (newX, newY)))
+                heapq.heappush(heap, Point(totalEstimatedCost, distance, len(newDirections) + 1,newDirections + dstr[idx],
+                                           stepDistances + str(stepDistance), (newX, newY)))
 
     return "Impossible", False
 
