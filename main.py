@@ -4,7 +4,6 @@ import imageProcessing
 import sys
 
 end = (22, 22)
-conditionalPathingChecked = False
 
 def getBestPath():
     # Get the maze from a photo
