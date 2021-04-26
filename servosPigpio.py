@@ -19,7 +19,6 @@ bigFrameLeftPosition = bigFrameStartPosition - bigFrameOffset - 50
 bigFrameRightPosition = bigFrameStartPosition + bigFrameOffset
 
 movementDuration = 0.8
-sleepDuration = 0
 
 pi = pigpio.pi()
 
@@ -32,22 +31,18 @@ def moveServo(servo, start,end):  #move from start to end, using delta number of
 
 def rotateSmallFrameLeft():
     moveServo(smallFrame, smallFrameStartPosition, smallFrameLeftPosition)
-    time.sleep(sleepDuration)
     moveServo(smallFrame, smallFrameLeftPosition, smallFrameStartPosition)
 
 def rotateSmallFrameRight():
     moveServo(smallFrame, smallFrameStartPosition, smallFrameRightPosition)
-    time.sleep(sleepDuration)
     moveServo(smallFrame, smallFrameRightPosition, smallFrameStartPosition)
 
 def rotateBigFrameLeft():
     moveServo(bigFrame, bigFrameStartPosition, bigFrameLeftPosition)
-    time.sleep(sleepDuration)
     moveServo(bigFrame, bigFrameLeftPosition, bigFrameStartPosition)
 
 def rotateBigFrameRight():
     moveServo(bigFrame, bigFrameStartPosition, bigFrameRightPosition)
-    time.sleep(sleepDuration)
     moveServo(bigFrame, bigFrameRightPosition, bigFrameStartPosition)
 
 def start(instructions):
