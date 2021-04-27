@@ -38,7 +38,6 @@ def move(path, conditionalPathing):
 def startMarbleMaze():
     path, conditionalPathing = getBestPath()
     print("Conditional Pathing: ", conditionalPathing)
-    print(path)
 
     servosPigpio.startMotors()
     move(path, conditionalPathing)
