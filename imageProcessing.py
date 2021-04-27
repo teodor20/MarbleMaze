@@ -32,7 +32,7 @@ def getMaze():
     # Create the maze in 2d array
     arr = np.ones(shape=(tile_height, tile_width))
     currentBlue = 0
-    ballPosition = (0, 0)
+    ballPosition = False
     for y in range(tile_height):
         for x in range(tile_width):
             current_tile = tiles[y, x]

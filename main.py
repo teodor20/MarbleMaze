@@ -12,6 +12,12 @@ def getBestPath():
     print("Ball Position: ", ballPosition)
 
     # Resolve the maze
+    if ballPosition == False:
+        print("Marble is missing")
+        servosPigpio.stopMotors()
+        sys.exit("Marble is missing")
+
+    # Resolve the maze
     if ballPosition == end:
         print("End reached")
         servosPigpio.stopMotors()
