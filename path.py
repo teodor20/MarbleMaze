@@ -62,7 +62,7 @@ def getPath(maze, start, end):
     shortestPath, conditionalPathing = shortestDistance(maze, start, end)
 
     if shortestPath == "Impossible":
-        return "Impossible"
+        return "Impossible", conditionalPathing
 
     instructions = []
     for letter in shortestPath:
