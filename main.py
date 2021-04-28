@@ -33,19 +33,20 @@ def getBestPath():
     return bestPath, conditionalPathing
 
 
-def move(path, conditionalPathing):
-    if conditionalPathing:
+def move(conditionalPathing):
+    if True: #Lets always use dynamic pathing for now
         while True:
             path, _ = getBestPath()
             servosPigpio.start([path[0]])
     else:
+        path, _ = getBestPath()
         servosPigpio.start(path)
 
 def startMarbleMaze():
-    path, conditionalPathing = getBestPath()
+    _, conditionalPathing = getBestPath()
     print("Conditional Pathing: ", conditionalPathing)
 
     servosPigpio.startMotors()
-    move(path, conditionalPathing)
+    move(conditionalPathing)
 
 startMarbleMaze()
